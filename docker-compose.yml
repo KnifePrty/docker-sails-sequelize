@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+    sails:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "1337:1337"
+        volumes:
+            - ./:/sails
+        environment:
+            - NODE_ENV=dev
+        command: nodemon
+        depends_on:
+            - mysql
+            - redis
+        links:
+            - mysql
+            - redis
+
+    mysql:
+        image: mysql:latest
+        ports:
+            - "33060:3306"
+        volumes:
+          - ./data:/docker-entrypoint-initdb.d
+          - ./.docker/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sails_db
+
+    redis:
+        image: redis:3
